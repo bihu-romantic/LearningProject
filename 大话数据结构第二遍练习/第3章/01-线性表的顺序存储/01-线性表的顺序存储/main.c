@@ -45,8 +45,13 @@ Status ClearList(SqList *L) {
     L->length = 0;
     return OK;
 }
-/*获取线性表L中i位置的元素值返回给e*/
+/* 初始条件：顺序线性表L已存在，1≤i≤ListLength(L) */
+/* 操作结果：用e返回L中第i个数据元素的值,注意i是指位置，第1个位置的数组是从0开始 */
 Status GetEle(SqList L, int i, int *e) {
+    if (L.length==0 || i<1 || i>L.length) {
+        return ERROR;
+    }
+    *e = L.data[i-1];
     return OK;
 }
 
@@ -89,6 +94,20 @@ Status ListInsert(SqList *L, int i, int e) {
 
 /*删除线性表L中第i个位置的元素，并用e返回*/
 Status ListDelete(SqList *L, int i, int *e) {
+    int k;
+    if (L->length == 0) {
+        return ERROR;
+    }
+    if (i<1 || i>L->length+1) {
+        return ERROR;
+    }
+    *e = L->data[i-1];
+    if (i < L->length) {//删除的不是线性表最后一个元素
+        for (k=i; k<L->length; k++) {
+            L->data[k-1] = L->data[k];
+        }
+    }
+    L->length--;
     return OK;
 }
 
@@ -116,9 +135,22 @@ Status GetElem(SqList L, int i, int *e) {
     return OK;
 }
 
+void unionL(SqList *La, SqList Lb) {
+    int la_len, lb_len, i;
+    ElemType e;
+    la_len = ListLength(*La);
+    lb_len = ListLength(Lb);
+    for (i=1; i<lb_len; i++) {
+        GetEle(Lb, i, &e);
+        if (!LocateElem(*La, e)) {
+            ListInsert(La, i, e);
+        }
+    }
+}
+
 int main(int argc, const char * argv[]) {
     
-    SqList L;
+    SqList L, Lb;
     ElemType e;
     Status i;
     int k;
@@ -167,34 +199,44 @@ int main(int argc, const char * argv[]) {
         }
     }
     
-//    k=ListLength(L); /* k为表长 */
-//    for(j=k+1;j>=k;j--)
-//    {
-//        i=ListDelete(&L,j,&e); /* 删除第j个数据 */
-//        if(i==ERROR)
-//            printf("删除第%d个数据失败\n",j);
-//        else
-//            printf("删除第%d个的元素值为：%d\n",j,e);
-//    }
-//    printf("依次输出L的元素：");
-//    ListTraverse(L);
-//
-//    j=5;
-//    ListDelete(&L,j,&e); /* 删除第5个数据 */
-//    printf("删除第%d个的元素值为：%d\n",j,e);
-//
-//    printf("依次输出L的元素：");
-//    ListTraverse(L);
-//
-//    //构造一个有10个数的Lb
-//    i=InitList(&Lb);
-//    for(j=6;j<=15;j++)
-//        i=ListInsert(&Lb,1,j);
-//
-//    unionL(&L,Lb);
-//
-//    printf("依次输出合并了Lb的L的元素：");
-//    ListTraverse(L);
+    k = ListLength(L);
+    for (j=k+1; j>=k; j--) {
+        i = ListDelete(&L, j, &e);
+        if (i==ERROR) {
+            printf("删除第%d个数据失败\n",j);
+        }else {
+            printf("删除第%d个的元素值为：%d\n", j, e);
+        }
+    }
+    k=ListLength(L); /* k为表长 */
+    for(j=k+1;j>=k;j--)
+    {
+        i=ListDelete(&L,j,&e); /* 删除第j个数据 */
+        if(i==ERROR)
+            printf("删除第%d个数据失败\n",j);
+        else
+            printf("删除第%d个的元素值为：%d\n",j,e);
+    }
+    printf("依次输出L的元素：");
+    print(L);
+
+    j=5;
+    ListDelete(&L,j,&e); /* 删除第5个数据 */
+    printf("删除第%d个的元素值为：%d\n",j,e);
+    printf("依次输出L的元素：");
+    print(L);
+
+    //构造一个有10个数的Lb
+    i=InitList(&Lb);
+    for(j=6;j<=15;j++) {
+        i = ListInsert(&Lb, 1, j);
+    }
+    printf("依次输出L的元素：");
+    print(L);
+    unionL(&L,Lb);
+
+    printf("依次输出合并了Lb的L的元素：");
+    print(L);
 
     return 0;
 }
