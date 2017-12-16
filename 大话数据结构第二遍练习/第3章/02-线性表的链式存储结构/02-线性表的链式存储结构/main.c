@@ -77,6 +77,85 @@ Status ListTraverse(LinkList L) {
     return OK;
 }
 
+/** 判断线性表是否为空 */
+Status ListEmpty(LinkList L) {
+    if (L -> next) {
+        return FALSE;
+    }else {
+        return TRUE;
+    }
+}
+
+Status ClearList(LinkList *L) {
+    LinkList p, q;
+    p = (*L)->next;
+    while (p) {
+        q = p->next;
+        free(p);
+        p = q;
+    }
+    (*L)->next = NULL;
+    return OK;
+}
+
+Status GetElem(LinkList L, int i, int *e) {
+    int j;
+    LinkList p;
+    p = L->next;
+    j=1;
+    while (p && j < i) {
+        p = p->next;
+        ++j;
+    }
+    if (!p || j > i) {
+        return ERROR;
+    }
+    *e = p -> data;
+    return OK;
+}
+
+/* 初始条件：顺序线性表L已存在 */
+/* 操作结果：返回L中第1个与e满足关系的数据元素的位序。 */
+/* 若这样的数据元素不存在，则返回值为0 */
+int LocateElem(LinkList L, int e) {
+    int i = 0;
+    LinkList p = L -> next;
+    while (p) {
+        ++i;
+        if (p -> data == e) {
+            return i;
+        }
+        p = p -> next;
+    }
+    return 0;
+}
+
+/* 初始条件：顺序线性表L已存在，1≤i≤ListLength(L) */
+/* 操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1 */
+Status ListDelete(LinkList *L, int index, ElemType *e) {
+    LinkList p, q;
+    int i = 1;
+    p = (*L);
+    while (p && i < index) {
+        ++i;
+        p = p -> next;
+    }
+    if (!(p->next) || i > index) {
+        return ERROR;
+    }
+    q = p -> next;
+    p->next = q->next;
+    *e = q->data;
+    free(q);
+    return OK;
+}
+
+/*  随机产生n个元素的值，建立带表头结点的单链线性表L（头插法） */
+Status CreateListHead(LinkList *L, int n) {
+    
+    return OK;
+}
+
 int main(int argc, const char * argv[]) {
     LinkList L;
     ElemType e;
@@ -90,5 +169,54 @@ int main(int argc, const char * argv[]) {
     }
     printf("在L的表头依次插入1～5后：L.data=");
     ListTraverse(L);
+    
+    printf("ListLength(L)=%d \n",ListLength(L));
+    i=ListEmpty(L);
+    printf("L是否空：i=%d(1:是 0:否)\n",i);
+    
+    i=ClearList(&L);
+    printf("清空L后：ListLength(L)=%d\n",ListLength(L));
+    i=ListEmpty(L);
+    printf("L是否空：i=%d(1:是 0:否)\n",i);
+    
+    for(j=1;j<=10;j++)
+        ListInsert(&L,j,j);
+    printf("在L的表尾依次插入1～10后：L.data=");
+    ListTraverse(L);
+    
+    printf("ListLength(L)=%d \n",ListLength(L));
+    
+    ListInsert(&L,1,0);
+    printf("在L的表头插入0后：L.data=");
+    ListTraverse(L);
+    printf("ListLength(L)=%d \n",ListLength(L));
+    
+    GetElem(L,5,&e);
+    printf("第5个元素的值为：%d\n",e);
+    
+    for(j=3;j<=4;j++) {
+        k=LocateElem(L,j);
+        if(k) {
+            printf("第%d个元素的值为%d\n",k,j);
+        }else {
+            printf("没有值为%d的元素\n",j);
+        }
+    }
+    printf("依次输出L的元素：");
+    ListTraverse(L);
+    
+    j=5;
+    ListDelete(&L,j,&e); /* 删除第5个数据 */
+    printf("删除第%d个的元素值为：%d\n",j,e);
+    
+    printf("依次输出L的元素：");
+    ListTraverse(L);
+    
+    i=ClearList(&L);
+    printf("\n清空L后：ListLength(L)=%d\n",ListLength(L));
+    CreateListHead(&L,20);
+    printf("整体创建L的元素(头插法)：");
+    ListTraverse(L);
+    
     return 0;
 }
