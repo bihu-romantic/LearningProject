@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define OK 1
 #define ERROR 0
@@ -152,7 +153,34 @@ Status ListDelete(LinkList *L, int index, ElemType *e) {
 
 /*  随机产生n个元素的值，建立带表头结点的单链线性表L（头插法） */
 Status CreateListHead(LinkList *L, int n) {
-    
+    LinkList p;
+    int i;
+    srand(time(0));//初始化随机数种子
+    *L = (LinkList) malloc(sizeof(Node));
+    (*L)->next = NULL;
+    for (i=0; i<n; i++) {
+        p = (LinkList)malloc(sizeof(Node));
+        p->data = rand() % 100 + 1;
+        p ->next = (*L) -> next;
+        (*L)->next = p;
+    }
+    return OK;
+}
+
+/*  随机产生n个元素的值，建立带表头结点的单链线性表L（尾插法） */
+Status CreateListTail(LinkList *L, int n) {
+    LinkList p, q;
+    int i;
+    *L = (LinkList) malloc(sizeof(Node));
+    (*L) -> next = NULL;
+    q = *L;
+    for (i=0; i<n; i++) {
+        p = (LinkList) malloc(sizeof(Node));
+        p -> data = rand() % 100 + 1;
+        q -> next = p;
+        q = p;
+    }
+    q -> next = NULL;
     return OK;
 }
 
@@ -216,6 +244,12 @@ int main(int argc, const char * argv[]) {
     printf("\n清空L后：ListLength(L)=%d\n",ListLength(L));
     CreateListHead(&L,20);
     printf("整体创建L的元素(头插法)：");
+    ListTraverse(L);
+    
+    i=ClearList(&L);
+    printf("\n删除L后：ListLength(L)=%d\n",ListLength(L));
+    CreateListTail(&L,20);
+    printf("整体创建L的元素(尾插法)：");
     ListTraverse(L);
     
     return 0;
