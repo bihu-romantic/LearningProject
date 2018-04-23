@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import jieba
 def getTxt():
-    txt = open('myPaper.txt','r',encoding='utf-8').read()
+    txt = open('threekingdoms.txt','r',encoding='utf-8').read()
     return txt
 txt = getTxt()
 
